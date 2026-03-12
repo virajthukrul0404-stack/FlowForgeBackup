@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Settings | FlowForge</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+<script>
+if(localStorage.getItem("theme")==="dark"){
+document.documentElement.classList.add("dark");
+}
+</script>
+
+</head>
+
+
+<body class="dashboard-body">
+
+<aside class="sidebar">
+
+<h2 class="logo">FlowForge</h2>
+
+<nav class="sidebar-nav">
+
+<a href="dashboard.html">📊 Dashboard</a>
+
+<a href="timer.html">⏱ Focus Timer</a>
+
+<a href="stats.html">📈 Statistics</a>
+
+<a href="learn.html">📚 Learn</a>
+
+<a href="leaderboard.html">🏆 Leaderboard</a>
+
+<a href="settings.html">⚙ Settings</a>
+
+</nav>
+
+</aside>
+
+
+<main class="main-content">
+
+<header class="dashboard-header">
+
+<h1>Settings</h1>
+<p>Customize your FlowForge experience</p>
+
+</header>
+
+
+<section class="stats-grid">
+
+<div class="stat-card">
+
+<h3>Theme</h3>
+
+<p>Toggle dark mode</p>
+
+<br>
+
+<button class="primary-btn" id="toggleTheme">
+Toggle Theme
+</button>
+
+</div>
+
+
+<div class="stat-card">
+
+<h3>Reset Data</h3>
+
+<p>Remove all saved productivity data.</p>
+
+<br>
+
+<button class="delete-btn" id="resetData">
+Reset
+</button>
+
+</div>
+
+</section>
+
+</main>
+
+
+<script>
+
+const toggle=document.getElementById("toggleTheme");
+
+toggle.addEventListener("click",()=>{
+
+document.documentElement.classList.toggle("dark");
+
+if(document.documentElement.classList.contains("dark")){
+localStorage.setItem("theme","dark");
+}else{
+localStorage.setItem("theme","light");
+}
+
+});
+
+const reset=document.getElementById("resetData");
+
+reset.addEventListener("click",()=>{
+
+localStorage.clear();
+alert("Data Reset");
+
+});
+
+</script>
+
+</body>
+</html>

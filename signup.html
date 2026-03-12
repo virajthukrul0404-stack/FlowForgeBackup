@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up | FlowForge</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+  if(localStorage.getItem("theme")==="dark"){
+  document.documentElement.classList.add("dark");
+  }
+  </script>
+</head>
+<body>
+
+  <header class="home-header">
+    <div class="nav">
+      <h2 class="logo">FlowForge</h2>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="login.html">Login</a>
+      </nav>
+    </div>
+  </header>
+
+  <main style="display:flex;justify-content:center;align-items:center;min-height:calc(100vh - 120px);padding:40px 16px 56px;">
+    <section style="width:100%;max-width:420px;background:rgba(15,23,42,0.9);border-radius:18px;border:1px solid rgba(148,163,184,0.25);box-shadow:0 24px 60px rgba(15,23,42,0.9);padding:28px 26px;">
+      <h1 style="font-size:24px;margin-bottom:6px;">Create your account</h1>
+      <p style="color:#94a3b8;margin-bottom:20px;font-size:14px;">Start tracking focus with FlowForge.</p>
+
+      <form id="signupForm" style="display:flex;flex-direction:column;gap:14px;">
+        <div>
+          <label for="name" style="display:block;font-size:13px;margin-bottom:4px;color:#e5e7eb;">Name</label>
+          <input id="name" type="text" required
+                 style="width:100%;padding:10px 12px;border-radius:999px;border:1px solid rgba(148,163,184,0.35);background:rgba(15,23,42,0.85);color:#e5e7eb;outline:none;">
+        </div>
+
+        <div>
+          <label for="email" style="display:block;font-size:13px;margin-bottom:4px;color:#e5e7eb;">Email</label>
+          <input id="email" type="email" required
+                 style="width:100%;padding:10px 12px;border-radius:999px;border:1px solid rgba(148,163,184,0.35);background:rgba(15,23,42,0.85);color:#e5e7eb;outline:none;">
+        </div>
+
+        <div>
+          <label for="password" style="display:block;font-size:13px;margin-bottom:4px;color:#e5e7eb;">Password</label>
+          <input id="password" type="password" required minlength="6"
+                 style="width:100%;padding:10px 12px;border-radius:999px;border:1px solid rgba(148,163,184,0.35);background:rgba(15,23,42,0.85);color:#e5e7eb;outline:none;">
+        </div>
+
+        <button type="submit" class="primary-btn" style="margin-top:6px;justify-content:center;width:100%;">Sign Up</button>
+      </form>
+
+      <p id="signupMessage" style="margin-top:12px;font-size:13px;color:#f97373;min-height:18px;"></p>
+
+      <p style="margin-top:10px;font-size:13px;color:#94a3b8;">
+        Already have an account?
+        <a href="login.html" style="color:#38bdf8;text-decoration:none;">Log in</a>
+      </p>
+    </section>
+  </main>
+
+  <script>
+    const signupForm = document.getElementById("signupForm");
+    const signupMessage = document.getElementById("signupMessage");
+
+    signupForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      signupMessage.textContent = "";
+
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      try {
+        const res = await fetch("/api/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          signupMessage.textContent = data.error || "Sign up failed.";
+          return;
+        }
+
+        localStorage.setItem("ff_user", JSON.stringify(data));
+        window.location.href = "dashboard.html";
+      } catch (err) {
+        signupMessage.textContent = "Cannot reach server. Is backend running?";
+      }
+    });
+  </script>
+</body>
+</html>
+

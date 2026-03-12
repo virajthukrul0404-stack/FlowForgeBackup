@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Statistics | FlowForge</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+<script>
+if(localStorage.getItem("theme")==="dark"){
+document.documentElement.classList.add("dark");
+}
+</script>
+
+<style>
+
+.chart{
+margin-top:40px;
+max-width:600px;
+}
+
+.bar-row{
+display:flex;
+align-items:center;
+margin:10px 0;
+}
+
+.day{
+width:60px;
+font-weight:500;
+}
+
+.bar{
+height:20px;
+background:#3b82f6;
+border-radius:6px;
+margin-left:10px;
+transition:0.3s;
+}
+
+.dark .bar{
+background:#60a5fa;
+}
+
+</style>
+
+</head>
+
+
+<body class="dashboard-body">
+
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+<h2 class="logo">FlowForge</h2>
+
+<nav class="sidebar-nav">
+
+<a href="dashboard.html">📊 Dashboard</a>
+
+<a href="timer.html">⏱ Focus Timer</a>
+
+<a href="stats.html">📈 Statistics</a>
+
+<a href="learn.html">📚 Learn</a>
+
+<a href="leaderboard.html">🏆 Leaderboard</a>
+
+<a href="settings.html">⚙ Settings</a>
+
+</nav>
+
+</aside>
+
+
+<!-- MAIN CONTENT -->
+
+<main class="main-content">
+
+<header class="dashboard-header">
+<h1>Statistics</h1>
+<p>Your focus at a glance.</p>
+</header>
+
+<section class="stats-grid dashboard-section">
+
+<div class="stat-card">
+<h3>Focus Time Today</h3>
+<p class="stat-value" id="todayTime">0 min</p>
+</div>
+
+<div class="stat-card">
+<h3>Sessions Completed</h3>
+<p class="stat-value" id="sessionsCompleted">0</p>
+</div>
+
+</section>
+
+
+<section class="action-section dashboard-section">
+
+<h2>Weekly Focus</h2>
+<p>Each bar shows how many minutes you stayed in deep work this week.</p>
+
+<div class="chart" id="chart"></div>
+
+<div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap;">
+<a href="dashboard.html" class="primary-btn">Back to Dashboard</a>
+</div>
+
+</section>
+
+</main>
+
+
+<script>
+
+/* ===== SAFE DATA LOADING ===== */
+
+let todayTime = localStorage.getItem("focusToday");
+let sessions = localStorage.getItem("sessions");
+let weekStats = localStorage.getItem("weekStats");
+
+
+if(!todayTime){
+todayTime = 145;
+localStorage.setItem("focusToday", todayTime);
+}
+
+if(!sessions){
+sessions = 6;
+localStorage.setItem("sessions", sessions);
+}
+
+if(!weekStats){
+weekStats = [60,120,90,150,80,140,100];
+localStorage.setItem("weekStats", JSON.stringify(weekStats));
+}else{
+weekStats = JSON.parse(weekStats);
+}
+
+
+/* update cards */
+
+document.getElementById("todayTime").textContent = todayTime + " min";
+document.getElementById("sessionsCompleted").textContent = sessions;
+
+
+/* WEEKLY CHART */
+
+const days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const chart = document.getElementById("chart");
+
+chart.innerHTML = "";
+
+weekStats.forEach((minutes,i)=>{
+
+const row=document.createElement("div");
+row.className="bar-row";
+
+const label=document.createElement("div");
+label.className="day";
+label.textContent=days[i];
+
+const bar=document.createElement("div");
+bar.className="bar";
+
+bar.style.width=(minutes*2)+"px";
+bar.title=minutes+" minutes";
+
+row.appendChild(label);
+row.appendChild(bar);
+
+chart.appendChild(row);
+
+});
+
+</script>
+
+</body>
+</html>

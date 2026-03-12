@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dashboard | FlowForge</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+<script>
+if(localStorage.getItem("theme")==="dark"){
+document.documentElement.classList.add("dark");
+}
+</script>
+
+</head>
+
+<body class="dashboard-body">
+
+<aside class="sidebar">
+
+<h2 class="logo">FlowForge</h2>
+
+<nav class="sidebar-nav">
+
+<a href="dashboard.html">📊 Dashboard</a>
+
+<a href="timer.html">⏱ Focus Timer</a>
+
+<a href="stats.html">📈 Statistics</a>
+
+<a href="learn.html">📚 Learn</a>
+
+<a href="leaderboard.html">🏆 Leaderboard</a>
+
+<a href="settings.html">⚙ Settings</a>
+
+</nav>
+</aside>
+
+
+<main class="main-content">
+
+<header class="dashboard-header">
+<h1>Welcome Back</h1>
+<p>Ready to forge your focus today?</p>
+</header>
+
+<div class="dashboard-main-grid">
+
+<div>
+<section class="stats-grid dashboard-section">
+
+<div class="stat-card">
+<h3>Focus Time Today</h3>
+<p class="stat-value">2h 15m</p>
+</div>
+
+<div class="stat-card">
+<h3>Focus Streak</h3>
+<p class="stat-value">6 Days</p>
+</div>
+
+<div class="stat-card">
+<h3>Sessions Completed</h3>
+<p class="stat-value">4</p>
+</div>
+
+</section>
+
+
+<section class="action-section dashboard-section">
+
+<h2>Start a Focus Session</h2>
+<p>Eliminate distractions and enter deep work mode.</p>
+
+<a href="timer.html" class="primary-btn start-btn">
+Start Timer
+</a>
+
+<div class="focus-clock">
+
+<div class="focus-clock-ring">
+<span class="focus-clock-time">25:00</span>
+</div>
+
+<div>
+<p class="focus-clock-caption">Deep focus cycle</p>
+<p style="color:#94a3b8;font-size:14px;max-width:260px;margin-top:4px;">
+Watch the ring orbit as your session progresses and keep your attention on one task.
+</p>
+</div>
+
+</div>
+
+</section>
+</div>
+
+<section class="tasks-section dashboard-section">
+
+<h2>Today's Tasks</h2>
+
+<div class="task-input-group">
+
+<input
+type="text"
+id="taskInput"
+placeholder="Add a task..."
+class="task-input"
+/>
+
+<button class="primary-btn" id="addTaskBtn">
+Add Task
+</button>
+
+</div>
+
+<ul id="taskList" class="task-list"></ul>
+
+</section>
+
+</div>
+
+</main>
+
+
+<script>
+
+const taskInput=document.getElementById("taskInput");
+const addTaskBtn=document.getElementById("addTaskBtn");
+const taskList=document.getElementById("taskList");
+
+let tasks=JSON.parse(localStorage.getItem("tasks")) || [];
+
+function renderTasks(){
+
+taskList.innerHTML="";
+
+tasks.forEach((task,index)=>{
+
+const li=document.createElement("li");
+
+li.className="task-item";
+
+li.innerHTML=`
+<span>${task}</span>
+<button class="delete-btn">Delete</button>
+`;
+
+const deleteBtn=li.querySelector(".delete-btn");
+const textSpan=li.querySelector("span");
+
+deleteBtn.addEventListener("click",()=>{
+
+tasks.splice(index,1);
+saveTasks();
+
+});
+
+textSpan.addEventListener("click",()=>{
+li.classList.toggle("task-completed");
+});
+
+taskList.appendChild(li);
+
+});
+
+}
+
+function saveTasks(){
+
+localStorage.setItem("tasks",JSON.stringify(tasks));
+renderTasks();
+
+}
+
+addTaskBtn.addEventListener("click",()=>{
+
+const task=taskInput.value.trim();
+
+if(task==="") return;
+
+tasks.push(task);
+
+taskInput.value="";
+
+saveTasks();
+
+});
+
+renderTasks();
+
+</script>
+
+</body>
+</html>

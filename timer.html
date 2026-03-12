@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Focus Timer | FlowForge</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+<script>
+if(localStorage.getItem("theme")==="dark"){
+document.documentElement.classList.add("dark");
+}
+</script>
+
+<style>
+
+/* TIMER PAGE LAYOUT */
+
+.timer-wrapper{
+display:flex;
+flex-direction:column;
+align-items:center;
+margin-top:40px;
+gap:40px;
+}
+
+/* MODE BUTTONS */
+
+.timer-modes{
+display:flex;
+gap:20px;
+justify-content:center;
+}
+
+.mode-btn{
+padding:10px 20px;
+border-radius:20px;
+border:none;
+background:#e5e7eb;
+cursor:pointer;
+font-weight:500;
+}
+
+.dark .mode-btn{
+background:#334155;
+color:white;
+}
+
+.mode-btn.active{
+background:#2563eb;
+color:white;
+}
+
+/* CIRCULAR TIMER */
+
+.timer-circle{
+width:260px;
+height:260px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+background:linear-gradient(135deg,#2563eb,#4f46e5);
+box-shadow:0 20px 40px rgba(0,0,0,0.15);
+}
+
+.dark .timer-circle{
+background:linear-gradient(135deg,#3b82f6,#6366f1);
+}
+
+.timer-display{
+font-size:48px;
+font-weight:700;
+color:white;
+}
+
+/* PHASE */
+
+.phase-indicator{
+font-size:18px;
+font-weight:500;
+}
+
+/* BUTTONS */
+
+.timer-buttons{
+display:flex;
+gap:25px;
+}
+
+.timer-buttons button{
+padding:12px 26px;
+border:none;
+border-radius:8px;
+background:#2563eb;
+color:white;
+font-weight:600;
+cursor:pointer;
+transition:0.2s;
+}
+
+.timer-buttons button:hover{
+transform:translateY(-2px);
+box-shadow:0 10px 20px rgba(0,0,0,0.15);
+}
+
+.dark .timer-buttons button{
+background:#3b82f6;
+}
+
+</style>
+
+</head>
+
+
+<body class="dashboard-body">
+
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+<h2 class="logo">FlowForge</h2>
+
+<nav class="sidebar-nav">
+
+<a href="dashboard.html">📊 Dashboard</a>
+
+<a href="timer.html">⏱ Focus Timer</a>
+
+<a href="stats.html">📈 Statistics</a>
+
+<a href="learn.html">📚 Learn</a>
+
+<a href="leaderboard.html">🏆 Leaderboard</a>
+
+<a href="settings.html">⚙ Settings</a>
+
+</nav>
+
+</aside>
+
+
+<main class="main-content">
+
+<header class="dashboard-header">
+<h1>Focus Timer</h1>
+<p>Select a productivity mode and begin deep work.</p>
+</header>
+
+
+<div class="timer-wrapper">
+
+
+<!-- MODES -->
+
+<div class="timer-modes">
+
+<button class="mode-btn active" data-mode="pomodoro">
+Pomodoro
+</button>
+
+<button class="mode-btn" data-mode="deep">
+45 / 15
+</button>
+
+<button class="mode-btn" data-mode="ultradian">
+Ultradian
+</button>
+
+</div>
+
+
+<!-- PHASE -->
+
+<div class="phase-indicator" id="phase">
+Focus Session
+</div>
+
+
+<!-- CIRCLE TIMER -->
+
+<div class="timer-circle">
+<div class="timer-display" id="timerDisplay">
+25:00
+</div>
+</div>
+
+
+<!-- BUTTONS -->
+
+<div class="timer-buttons">
+
+<button id="startBtn">
+Start
+</button>
+
+<button id="pauseBtn">
+Pause
+</button>
+
+<button id="resetBtn">
+Reset
+</button>
+
+</div>
+
+
+</div>
+
+</main>
+
+
+
+<script>
+
+/* TIMER MODES */
+
+const modes = {
+
+pomodoro: { focus:25, break:5 },
+
+deep: { focus:45, break:15 },
+
+ultradian: { focus:90, break:20 }
+
+};
+
+
+let currentMode = "pomodoro";
+let phase = "focus";
+let timerInterval = null;
+let paused = false;
+
+let timeRemaining = modes[currentMode].focus * 60;
+
+
+/* ELEMENTS */
+
+const timerDisplay = document.getElementById("timerDisplay");
+const phaseIndicator = document.getElementById("phase");
+const startBtn = document.getElementById("startBtn");
+const pauseBtn = document.getElementById("pauseBtn");
+const resetBtn = document.getElementById("resetBtn");
+const modeButtons = document.querySelectorAll(".mode-btn");
+
+
+function updateDisplay(){
+
+let minutes = Math.floor(timeRemaining / 60);
+let seconds = timeRemaining % 60;
+
+seconds = seconds < 10 ? "0"+seconds : seconds;
+
+timerDisplay.textContent = minutes + ":" + seconds;
+
+}
+
+
+/* START */
+
+function startTimer(){
+
+if(timerInterval) return;
+
+timerInterval = setInterval(()=>{
+
+timeRemaining--;
+
+updateDisplay();
+
+if(timeRemaining <= 0){
+switchPhase();
+}
+
+},1000);
+
+}
+
+
+/* PAUSE */
+
+function pauseTimer(){
+
+if(!paused){
+
+clearInterval(timerInterval);
+timerInterval = null;
+
+pauseBtn.textContent="Resume";
+
+paused=true;
+
+}else{
+
+pauseBtn.textContent="Pause";
+
+paused=false;
+
+startTimer();
+
+}
+
+}
+
+
+/* RESET */
+
+function resetTimer(){
+
+clearInterval(timerInterval);
+
+timerInterval=null;
+
+paused=false;
+
+pauseBtn.textContent="Pause";
+
+phase="focus";
+
+phaseIndicator.textContent="Focus Session";
+
+timeRemaining=modes[currentMode].focus*60;
+
+updateDisplay();
+
+}
+
+
+/* SWITCH PHASE */
+
+function switchPhase(){
+
+clearInterval(timerInterval);
+
+timerInterval=null;
+
+if(phase==="focus"){
+
+phase="break";
+
+phaseIndicator.textContent="Break Time";
+
+timeRemaining=modes[currentMode].break*60;
+
+}else{
+
+phase="focus";
+
+phaseIndicator.textContent="Focus Session";
+
+timeRemaining=modes[currentMode].focus*60;
+
+}
+
+updateDisplay();
+
+startTimer();
+
+}
+
+
+/* MODE SWITCH */
+
+modeButtons.forEach(button=>{
+
+button.addEventListener("click",()=>{
+
+modeButtons.forEach(b=>b.classList.remove("active"));
+
+button.classList.add("active");
+
+currentMode=button.dataset.mode;
+
+resetTimer();
+
+});
+
+});
+
+
+startBtn.addEventListener("click",startTimer);
+pauseBtn.addEventListener("click",pauseTimer);
+resetBtn.addEventListener("click",resetTimer);
+
+updateDisplay();
+
+</script>
+
+</body>
+</html>

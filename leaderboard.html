@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leaderboard | FlowForge</title>
+<link rel="stylesheet" href="css/style.css">
+<script>
+if(localStorage.getItem("theme")==="dark"){
+document.documentElement.classList.add("dark");
+}
+</script>
+</head>
+<body class="dashboard-body">
+
+<aside class="sidebar">
+<h2 class="logo">FlowForge</h2>
+<nav class="sidebar-nav">
+<a href="dashboard.html">📊 Dashboard</a>
+<a href="timer.html">⏱ Focus Timer</a>
+<a href="stats.html">📈 Statistics</a>
+<a href="learn.html">📚 Learn</a>
+<a href="leaderboard.html" class="active">🏆 Leaderboard</a>
+<a href="settings.html">⚙ Settings</a>
+</nav>
+</aside>
+
+<main class="main-content">
+
+<header class="dashboard-header">
+<h1>Leaderboard</h1>
+<p>See who has earned the most XP in FlowForge.</p>
+</header>
+
+<section class="dashboard-section leaderboard-section">
+
+<div class="leaderboard-card">
+<div class="leaderboard-header">
+<span>Rank</span>
+<span>Teammate</span>
+<span>XP</span>
+</div>
+<div id="leaderboardBody" class="leaderboard-body">
+<!-- rows injected by JS -->
+</div>
+</div>
+
+</section>
+
+</main>
+
+<script>
+const players = [
+{ name:"Aayush" },
+{ name:"Arnav" },
+{ name:"Aaditya" },
+{ name:"Sara" },
+{ name:"Viraj" },
+{ name:"Disha" },
+{ name:"Atharva" },
+{ name:"Aditi" }
+];
+
+function randomXp(min, max){
+return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+const withXp = players.map(p => ({
+  ...p,
+  xp: randomXp(800, 4200)
+}));
+
+withXp.sort((a,b) => b.xp - a.xp);
+
+const bodyEl = document.getElementById("leaderboardBody");
+
+withXp.forEach((player, index) => {
+  const row = document.createElement("div");
+  row.className = "leaderboard-row";
+
+  const rankSpan = document.createElement("span");
+  rankSpan.className = "leaderboard-rank";
+  const rank = index + 1;
+  if(rank === 1){
+    rankSpan.textContent = "🥇";
+  }else if(rank === 2){
+    rankSpan.textContent = "🥈";
+  }else if(rank === 3){
+    rankSpan.textContent = "🥉";
+  }else{
+    rankSpan.textContent = "#" + rank;
+  }
+
+  const nameSpan = document.createElement("span");
+  nameSpan.className = "leaderboard-name";
+  nameSpan.textContent = player.name;
+
+  const xpSpan = document.createElement("span");
+  xpSpan.className = "leaderboard-xp";
+  xpSpan.textContent = player.xp + " XP";
+
+  row.appendChild(rankSpan);
+  row.appendChild(nameSpan);
+  row.appendChild(xpSpan);
+
+  bodyEl.appendChild(row);
+});
+</script>
+
+</body>
+</html>
+
